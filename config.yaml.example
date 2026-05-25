@@ -1,0 +1,33 @@
+app:
+  name: pipefy-integration
+  port: 8080
+  # Accepted values: dev | staging | prod
+  # dev:     fake pipefy adapter, no token required
+  # staging: real adapter with simulate=true, token required
+  # prod:    real adapter, token required, mutations are sent
+  environment: dev
+
+database:
+  host: localhost
+  port: 5433
+  name: pipefy_integration
+  user: pipefy
+  password: pipefy
+  sslmode: disable
+
+pipefy:
+  # Personal Access Token from https://app.pipefy.com/tokens
+  # Required for staging and prod. Leave empty for dev.
+  token: ""
+  # Target pipe ID where cards will be created
+  pipe_id: ""
+  # simulate: true  -> builds and logs the GraphQL payload but does not send the HTTP request
+  # simulate: false -> sends the request to Pipefy API (prod behavior)
+  # Only meaningful in staging. In dev, the fake adapter is used regardless.
+  simulate: false
+
+logger:
+  # Accepted values: debug | info | warn | error
+  level: info
+  # Accepted values: json | console
+  format: json
