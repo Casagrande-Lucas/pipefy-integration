@@ -3,6 +3,7 @@ module github.com/Casagrande-Lucas/pipefy-integration
 go 1.26
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/spf13/viper v1.21.0
 	go.uber.org/zap v1.28.0
 )
