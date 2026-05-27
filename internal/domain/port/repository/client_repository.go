@@ -12,4 +12,8 @@ type ClientRepository interface {
 
 	// UpdateStatusAndPriority updates only the status, priority, and updated_at fields.
 	UpdateStatusAndPriority(client *entity.Client) error
+
+	// UpdatePipefyCardID updates only the pipefy_card_id field after the outbox worker
+	// successfully delivers the createCard mutation to Pipefy.
+	UpdatePipefyCardID(client *entity.Client) error
 }
