@@ -46,6 +46,21 @@ func (r *clientRepository) FindByEmail(email string) (*entity.Client, error) {
 	return client, nil
 }
 
+// UpdatePipefyCardID updates only the pipefy_card_id field after the outbox worker
+// successfully delivers the createCard mutation to Pipefy.
+func (r *clientRepository) UpdatePipefyCardID(client *entity.Client) error {
+	err := r.db.Model(&model.Client{}).
+		Where("id = ?", client.ID.String()).
+		Updates(map[string]interface{}{
+			"pipefy_card_id": client.PipefyCardID,
+			"updated_at":     client.UpdatedAt,
+		}).Error
+	if err != nil {
+		return apperror.NewInternal(err)
+	}
+	return nil
+}
+
 func (r *clientRepository) UpdateStatusAndPriority(client *entity.Client) error {
 	err := r.db.Model(&model.Client{}).
 		Where("id = ?", client.ID.String()).
