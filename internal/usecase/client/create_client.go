@@ -18,8 +18,8 @@ type CreateClientInput struct {
 // CreateClient is the use case responsible for registering a new client
 // and mapping it to a Pipefy card.
 type CreateClient struct {
-	clientRepo  repository.ClientRepository
-	pipefySvc   service.PipefyService
+	clientRepo repository.ClientRepository
+	pipefySvc  service.PipefyService
 }
 
 // NewCreateClient returns a CreateClient use case with its dependencies injected.
@@ -30,7 +30,7 @@ func NewCreateClient(clientRepo repository.ClientRepository, pipefySvc service.P
 	}
 }
 
-// Execute runs the create client flow:
+// Execute runs the creation client flow:
 //  1. Validates required fields.
 //  2. Builds the Client entity (email validation via value object).
 //  3. Creates the Pipefy card and stores the returned card ID on the entity.
