@@ -16,4 +16,8 @@ type ClientRepository interface {
 	// UpdatePipefyCardID updates only the pipefy_card_id field after the outbox worker
 	// successfully delivers the createCard mutation to Pipefy.
 	UpdatePipefyCardID(client *entity.Client) error
+
+	// FindByPipefyCardID returns the client with the given pipefy_card_id,
+	// or apperror.NotFound if absent.
+	FindByPipefyCardID(cardID string) (*entity.Client, error)
 }

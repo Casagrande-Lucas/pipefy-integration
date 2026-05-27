@@ -46,6 +46,23 @@ func (r *clientRepository) FindByEmail(email string) (*entity.Client, error) {
 	return client, nil
 }
 
+func (r *clientRepository) FindByPipefyCardID(cardID string) (*entity.Client, error) {
+	var m model.Client
+	err := r.db.Where("pipefy_card_id = ?", cardID).First(&m).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, apperror.NewNotFound("client", err)
+		}
+		return nil, apperror.NewInternal(err)
+	}
+
+	client, err := mapper.ClientToEntity(&m)
+	if err != nil {
+		return nil, apperror.NewInternal(err)
+	}
+	return client, nil
+}
+
 // UpdatePipefyCardID updates only the pipefy_card_id field after the outbox worker
 // successfully delivers the createCard mutation to Pipefy.
 func (r *clientRepository) UpdatePipefyCardID(client *entity.Client) error {
