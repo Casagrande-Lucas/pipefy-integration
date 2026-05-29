@@ -7,7 +7,7 @@ COVERAGE_HTML := coverage.html
 DOCKER_COMPOSE := docker compose
 
 .PHONY: help setup run dev build test test-cover swagger \
-        docker-up docker-down docker-logs pgadmin-up \
+        docker-up docker-db docker-down docker-logs pgadmin-up \
         lint tidy clean
 
 all: help
@@ -66,14 +66,17 @@ swagger: ## Generate Swagger docs (requires: go install github.com/swaggo/swag/c
 # Docker
 # ----------------------------------------------------------
 
-docker-up: ## Start PostgreSQL container
+docker-up: ## Start PostgreSQL + API (builds image if needed)
+	$(DOCKER_COMPOSE) up -d --build
+
+docker-db: ## Start PostgreSQL only (local dev — use with make run)
 	$(DOCKER_COMPOSE) up -d postgres
 
-docker-down: ## Stop and remove containers and volumes
+docker-down: ## Stop and remove all containers and volumes
 	$(DOCKER_COMPOSE) down -v
 
-docker-logs: ## Tail PostgreSQL container logs
-	$(DOCKER_COMPOSE) logs -f postgres
+docker-logs: ## Tail logs for all running containers
+	$(DOCKER_COMPOSE) logs -f
 
 pgadmin-up: ## Start PostgreSQL + pgAdmin (UI at http://localhost:5050)
 	$(DOCKER_COMPOSE) --profile pgadmin up -d

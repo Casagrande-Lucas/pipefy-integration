@@ -17,6 +17,25 @@ services:
       retries: 5
     restart: unless-stopped
 
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pipefy_api
+    ports:
+      - "${API_PORT:-8080}:8080"
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      # Overrides database.host so the API reaches postgres by service name.
+      # All other values come from the mounted config.yaml.
+      PIPEFY_DATABASE_HOST: postgres
+      PIPEFY_DATABASE_PORT: "5432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
   pgadmin:
     image: dpage/pgadmin4:8
     container_name: pipefy_pgadmin
