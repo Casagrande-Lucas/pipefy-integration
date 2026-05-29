@@ -61,6 +61,15 @@ type LoggerConfig struct {
 
 // Load reads the configuration file at the given path and returns a validated Config.
 // If path is empty, it looks for "config.yaml" in the current directory.
+//
+// Environment variables override any config file value.
+// Each binding follows the pattern PIPEFY_<SECTION>_<KEY> (uppercase).
+// Examples:
+//
+//	PIPEFY_DATABASE_HOST=postgres   override database.host
+//	PIPEFY_DATABASE_PORT=5432       override database.port
+//	PIPEFY_APP_PORT=9090            override app.port
+//	PIPEFY_TOKEN=mytoken            override pipefy.token
 func Load(path string) (*Config, error) {
 	v := viper.New()
 
@@ -74,6 +83,29 @@ func Load(path string) (*Config, error) {
 
 	if err := v.ReadInConfig(); err != nil {
 		return nil, fmt.Errorf("reading config file: %w", err)
+	}
+
+	// Explicit env var bindings — AutomaticEnv alone does not work with
+	// Unmarshal for nested keys in Viper; BindEnv is required per key.
+	envBindings := map[string]string{
+		"app.port":          "PIPEFY_APP_PORT",
+		"app.environment":   "PIPEFY_APP_ENVIRONMENT",
+		"database.host":     "PIPEFY_DATABASE_HOST",
+		"database.port":     "PIPEFY_DATABASE_PORT",
+		"database.name":     "PIPEFY_DATABASE_NAME",
+		"database.user":     "PIPEFY_DATABASE_USER",
+		"database.password": "PIPEFY_DATABASE_PASSWORD",
+		"database.sslmode":  "PIPEFY_DATABASE_SSLMODE",
+		"pipefy.token":      "PIPEFY_TOKEN",
+		"pipefy.pipe_id":    "PIPEFY_PIPE_ID",
+		"pipefy.simulate":   "PIPEFY_SIMULATE",
+		"logger.level":      "PIPEFY_LOG_LEVEL",
+		"logger.format":     "PIPEFY_LOG_FORMAT",
+	}
+	for key, env := range envBindings {
+		if err := v.BindEnv(key, env); err != nil {
+			return nil, fmt.Errorf("binding env %s: %w", env, err)
+		}
 	}
 
 	var cfg Config
