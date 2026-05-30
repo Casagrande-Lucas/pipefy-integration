@@ -89,6 +89,7 @@ func (a *RealAdapter) CreateCard(client *entity.Client) (string, error) {
 				{"field_id": "cliente_email", "field_value": client.Email.String()},
 				{"field_id": "tipo_solicitacao", "field_value": client.RequestType},
 				{"field_id": "valor_patrimonio", "field_value": fmt.Sprintf("%.2f", client.PatrimonyValue)},
+				{"field_id": "prioridade", "field_value": pipefyPriorityLabel(client.Priority.String())},
 			},
 		},
 	}
@@ -213,4 +214,18 @@ func (a *RealAdapter) do(query string, variables map[string]any, dest any) error
 	}
 
 	return nil
+}
+
+// pipefyPriorityLabel maps a domain priority string to the Pipefy radio
+// option label defined in the pipe's "Prioridade" field.
+//
+// Domain → Pipefy option label
+//
+//	prioridade_alta   → Alta
+//	prioridade_normal → Normal
+func pipefyPriorityLabel(priority string) string {
+	if priority == "prioridade_alta" {
+		return "Alta"
+	}
+	return "Normal"
 }
