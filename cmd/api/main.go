@@ -1,6 +1,18 @@
 // Command api is the application entrypoint.
 // It wires all dependencies (config, logger, database, adapters, use cases,
 // handlers) and starts the HTTP server with the outbox background worker.
+//
+//	@title          Pipefy Integration API
+//	@version        1.0
+//	@description    Registers clients and synchronises them with Pipefy cards via the Transactional Outbox Pattern.
+//
+//	@contact.name   Lucas Casagrande
+//	@contact.email  dev.casagrande@gmail.com
+//
+//	@host       localhost:8080
+//	@BasePath   /api/v1
+//
+//	@schemes    http https
 package main
 
 import (
